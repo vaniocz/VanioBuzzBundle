@@ -1,5 +1,5 @@
 <?php
-namespace VanioBuzzBundle\Buzz;
+namespace Vanio\BuzzBundle\Buzz;
 
 class RequestFailedException extends \RuntimeException
 {}

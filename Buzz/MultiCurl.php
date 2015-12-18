@@ -1,5 +1,5 @@
 <?php
-namespace VanioBuzzBundle\Buzz;
+namespace Vanio\BuzzBundle\Buzz;
 
 use Buzz\Client\MultiCurl as BaseMultiCurl;
 use Buzz\Message\MessageInterface;
