@@ -1,5 +1,5 @@
 <?php
-namespace DoucovaniUserBundle\Buzz;
+namespace VanioBuzzBundle\Buzz;
 
 use Buzz\Listener\ListenerInterface;
 use Buzz\Message\MessageInterface;

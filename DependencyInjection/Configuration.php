@@ -13,28 +13,18 @@ class Configuration implements ConfigurationInterface
     {
         $treeBuilder = new TreeBuilder;
         $rootNode = $treeBuilder->root('vanio_buzz');
+
         $rootNode
             ->children()
-                ->scalarNode('client')
+                ->enumNode('client')
+                    ->values(['curl', 'file_get_contents', 'multi_curl'])
                     ->defaultValue('curl')
-                    ->end()
                 ->end()
-                ->scalarNode('client_timeout')
-                    ->defaultValue(5)
-                    ->end()
-                ->end()
-                ->scalarNode('throw_exceptions')
-                    ->defaultValue(true)
-                    ->end()
-                ->end()
-                ->scalarNode('defer_listeners')
-                    ->defaultValue(true)
-                    ->end()
-                ->end()
-                ->scalarNode('json_listener')
-                    ->defaultValue(false)
-                    ->end()
-                ->end();
+                ->integerNode('client_timeout')->defaultValue(5)->end()
+                ->booleanNode('throw_exceptions')->defaultTrue()->end()
+                ->booleanNode('defer_listeners')->defaultTrue()->end()
+                ->booleanNode('json_listener')->defaultFalse()->end()
+            ->end();
 
         return $treeBuilder;
     }
