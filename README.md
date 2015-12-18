@@ -1,2 +1,2 @@
 # VanioBuzzBundle
-An integration of Buzz library inside Symfony
+An integration of Buzz HTTP client inside Symfony
