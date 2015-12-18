@@ -14,7 +14,7 @@
         "nette/utils": "^2.3"
     },
     "autoload": {
-        "psr-4": {"Vanio\\BuzzBundle": ""}
+        "psr-4": {"Vanio\\BuzzBundle\\": ""}
     },
     "extra": {
         "branch-alias": {
