@@ -1,0 +1,24 @@
+{
+    "name": "vanio/buzz-bundle",
+    "description": "An integration of Buzz HTTP client inside Symfony",
+    "type": "symfony-bundle",
+    "keywords": ["http client", "buzz"],
+    "homepage": "https://github.com/vaniocz/VanioBuzzBundle",
+    "license": "MIT",
+    "authors": [
+        {"name": "Marek Štípek", "email": "marek.stipek@vanio.cz"}
+    ],
+    "require": {
+        "php": ">=5.5",
+        "kriswallsmith/buzz": "^0.15",
+        "nette/utils": "^2.3"
+    },
+    "autoload": {
+        "psr-4": {"Vanio\\BuzzBundle": ""}
+    },
+    "extra": {
+        "branch-alias": {
+            "dev-master": "1.0-dev"
+        }
+    }
+}
