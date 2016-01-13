@@ -21,6 +21,7 @@ class Configuration implements ConfigurationInterface
                     ->defaultValue('curl')
                 ->end()
                 ->integerNode('client_timeout')->defaultValue(5)->end()
+                ->booleanNode('client_verify_peer')->defaultTrue()->end()
                 ->booleanNode('throw_exceptions')->defaultTrue()->end()
                 ->booleanNode('defer_listeners')->defaultTrue()->end()
                 ->booleanNode('json_listener')->defaultFalse()->end()

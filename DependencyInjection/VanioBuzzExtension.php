@@ -23,6 +23,7 @@ class VanioBuzzExtension extends Extension
 
         $container->setParameter('buzz.client.class', $this->determineClientClass($config['client']));
         $container->setParameter('buzz.client.timeout', $config['client_timeout']);
+        $container->setParameter('buzz.client.verify_peer', $config['client_verify_peer']);
 
         if ($config['client'] === 'multi_curl' && $config['defer_listeners']) {
             $container->getDefinition('vanio_buzz.buzz.batch_listener_chain')->addTag('vanio_buzz.listener');

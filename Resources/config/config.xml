@@ -12,6 +12,9 @@
             <call method="setTimeout">
                 <argument>%buzz.client.timeout%</argument>
             </call>
+            <call method="setVerifyPeer">
+                <argument>%buzz.client.verify_peer%</argument>
+            </call>
         </service>
         <service id="buzz" class="%buzz.browser.class%">
             <argument type="service" id="buzz.client"/>
