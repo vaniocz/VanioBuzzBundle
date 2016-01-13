@@ -30,14 +30,12 @@ class ExceptionListener implements ListenerInterface
 
         if ($response->isClientError() || $response->isServerError() || $curlErrorResult) {
             throw new RequestFailedException(sprintf(
-                'HTTP %s request to "%s%s" failed: %d - %s.',
+                'HTTP %s request to "%s%s" failed: %d - "%s".',
                 $request->getMethod(),
                 $request->getHost(),
                 $request->getResource(),
                 $curlErrorResult ?: $response->getStatusCode(),
-                $curlErrorResult
-                    ? 'see http://curl.haxx.se/libcurl/c/libcurl-errors.html'
-                    : $response->getReasonPhrase()
+                $curlErrorResult ? curl_strerror($curlErrorResult) : $response->getReasonPhrase()
             ));
         }
     }
