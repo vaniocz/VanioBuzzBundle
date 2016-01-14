@@ -10,7 +10,7 @@ class BatchRequestFailedException extends RequestFailedException
 
     /**
      * @param array $messages - array of [$request, $response]
-     * @param null $errorMessage
+     * @param string|null $errorMessage
      */
     public function __construct(array $messages, $errorMessage = null)
     {
