@@ -1,13 +1,15 @@
 <?php
 namespace Vanio\BuzzBundle\DependencyInjection;
 
+use Buzz\Client\BatchClientInterface;
 use Buzz\Client\Curl;
 use Buzz\Client\FileGetContents;
+use Buzz\Client\MultiCurl;
 use Symfony\Component\Config\FileLocator;
 use Symfony\Component\DependencyInjection\ContainerBuilder;
 use Symfony\Component\DependencyInjection\Loader\XmlFileLoader;
 use Symfony\Component\HttpKernel\DependencyInjection\Extension;
-use Vanio\BuzzBundle\Buzz\MultiCurl;
+use Vanio\BuzzBundle\Buzz\BatchBrowser;
 
 class VanioBuzzExtension extends Extension
 {
@@ -21,16 +23,17 @@ class VanioBuzzExtension extends Extension
         $loader = new XmlFileLoader($container, new FileLocator(__DIR__ . '/../Resources/config'));
         $loader->load('config.xml');
 
-        $container->setParameter('buzz.client.class', $this->determineClientClass($config['client']));
+        $clientClass = $this->determineClientClass($config['client']);
+        $container->setParameter('buzz.client.class', $clientClass);
         $container->setParameter('buzz.client.timeout', $config['client_timeout']);
         $container->setParameter('buzz.client.verify_peer', $config['client_verify_peer']);
 
-        if ($config['client'] === 'multi_curl' && $config['defer_listeners']) {
-            $container->getDefinition('vanio_buzz.buzz.batch_listener_chain')->addTag('vanio_buzz.listener');
+        if (is_a($clientClass, BatchClientInterface::class, true)) {
+            $container->setParameter('buzz.browser.class', BatchBrowser::class);
         }
 
         if ($config['throw_exceptions']) {
-            $container->getDefinition('vanio_buzz.buzz.exception_listener')->addTag('vanio_buzz.listener');
+            $container->getDefinition('vanio_buzz.buzz.error_listener')->addTag('vanio_buzz.listener');
         }
 
         if ($config['json_listener']) {

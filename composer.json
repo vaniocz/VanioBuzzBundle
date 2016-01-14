@@ -9,7 +9,7 @@
         {"name": "Marek Štípek", "email": "marek.stipek@vanio.cz"}
     ],
     "require": {
-        "php": ">=5.5",
+        "php": ">=5.6",
         "kriswallsmith/buzz": "^0.15",
         "nette/utils": "^2.3"
     },

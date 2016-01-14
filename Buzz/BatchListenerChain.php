@@ -1,6 +1,8 @@
 <?php
 namespace Vanio\BuzzBundle\Buzz;
 
+use Buzz\Client\BatchClientInterface;
+use Buzz\Client\MultiCurl;
 use Buzz\Listener\ListenerChain;
 use Buzz\Listener\ListenerInterface;
 use Buzz\Message\MessageInterface;
@@ -10,64 +12,77 @@ use Buzz\Message\Response;
 /**
  * @method ListenerInterface[] getListeners
  */
-class BatchListenerChain extends ListenerChain
+class BatchListenerChain extends ListenerChain implements BatchListener, MultiCurlListener
 {
-    private $client;
     private $messages = [];
-    private $numberOfRemainingResults = 0;
+
+    /** @var BatchListener[] */
+    private $batchListeners = [];
+
+    /** @var MultiCurlListener[] */
+    private $multiCurlListeners = [];
 
     /**
-     * @param ListenerInterface[] $listeners
+     * {@inheritDoc}
      */
-    public function __construct(MultiCurl $client, array $listeners = [])
+    public function addListener(ListenerInterface $listener)
     {
-        parent::__construct($listeners);
-        $this->client = $client;
-        $client->setOption('callback', [$this, 'onResult']);
+        parent::addListener($listener);
+
+        if ($listener instanceof BatchListener) {
+            $this->batchListeners[] = $listener;
+        }
+
+        if ($listener instanceof MultiCurlListener) {
+            $this->multiCurlListeners[] = $listener;
+        }
     }
 
+    /**
+     * {@inheritDoc}
+     */
     public function postSend(RequestInterface $request, MessageInterface $response)
     {
-        $this->numberOfRemainingResults++;
+        $this->messages[] = [$request, $response];
     }
 
     /**
-     * @internal
+     * {@inheritDoc}
      */
-    public function onResult(
-        MultiCurl $client,
-        RequestInterface $request,
-        Response $response,
-        array $options,
-        int $result
-    ) {
-        $this->messages[] = [$request, $response, $result];
-
-        if (--$this->numberOfRemainingResults) {
-            return;
+    public function preFlush(BatchClientInterface $client)
+    {
+        foreach ($this->batchListeners as $batchListener) {
+            $batchListener->preFlush($client);
         }
+    }
 
+    /**
+     * {@inheritDoc}
+     */
+    public function postFlush(BatchClientInterface $client)
+    {
         foreach ($this->messages as $messages) {
-            list($request, $response, $result) = $messages;
+            list($request, $response) = $messages;
 
-            if ($result !== CURLE_OK) {
-                $response->addHeader(sprintf('X-Curl-Error-Result: %d', $result));
+            foreach ($this->getListeners() as $listener) {
+                $listener->postSend($request, $response);
             }
         }
 
-        try {
-            foreach ($this->messages as $messages) {
-                list($request, $response) = $messages;
+        foreach ($this->batchListeners as $batchListener) {
+            $batchListener->postFlush($client);
+        }
 
-                foreach ($this->getListeners() as $listener) {
-                    $listener->postSend($request, $response);
-                }
-            }
-        } catch (\Throwable $e) {
-            throw $e;
-        } finally {
-            $this->messages = [];
-            $this->numberOfRemainingResults = 0;
+        $this->messages = [];
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    public function onResult(MultiCurl $client, RequestInterface $request, Response $response, array $options, $error)
+    {
+        foreach ($this->multiCurlListeners as $multiCurlListener) {
+            $multiCurlListener->onResult($client, $request, $response, $options, $error);
         }
     }
 }
