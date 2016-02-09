@@ -18,7 +18,7 @@
         <service id="buzz" class="%buzz.browser.class%">
             <argument type="service" id="buzz.client"/>
         </service>
-        <service id="vanio_buzz.buzz.error_listener" class="%vanio_buzz.buzz.error_listener.class%" public="false"/>
         <service id="vanio_buzz.buzz.json_listener" class="%vanio_buzz.buzz.json_listener.class%" public="false"/>
+        <service id="vanio_buzz.buzz.error_listener" class="%vanio_buzz.buzz.error_listener.class%" public="false"/>
     </services>
 </container>
